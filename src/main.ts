@@ -23,8 +23,14 @@ async function bootstrap() {
 		new ValidationPipe({
 			//automatically it removes al not parameters indicated in ours dtos and returns the response like always
 			whitelist: true,
+
 			//returns an error request if request has any not valid parameter inside its body
 			// forbidNonWhitelisted: true,
+
+			// this will transform the values into the implicit form in example: '2' => 2
+			transformOptions: {
+				enableImplicitConversion: true,
+			},
 		}),
 	);
 

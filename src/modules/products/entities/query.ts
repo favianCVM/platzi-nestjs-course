@@ -15,7 +15,12 @@ export class FindAllProductsQuery {
 	limit?: number;
 
 	@IsOptional()
+	@Type(() => Number)
+	@IsString()
+	minPrice?: number;
+
+	@IsOptional()
 	@Type(() => String)
 	@IsString()
-	type?: string;
+	maxPrice?: number;
 }

@@ -1,66 +1,44 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 import { User } from '../entities/user.entity';
-import { Order } from '../entities/order.entity';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
-import { ProductsService } from 'src/modules/products/services/products.service';
 
 @Injectable()
 export class UsersService {
-	constructor(private productService: ProductsService) {}
-
-	private counterId = 1;
-	private users: User[] = [
-		{
-			id: 1,
-			email: 'correo@mail.com',
-			password: '12345',
-			role: 'admin',
-		},
-	];
+	constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
 	findAll() {
-		return this.users;
+		return this.userModel.find().exec();
 	}
 
-	findOne(id: number) {
-		const user = this.users.find((item) => item.id === id);
-		if (!user) {
-			throw new NotFoundException(`User #${id} not found`);
-		}
-		return user;
+	async findOne(id: string) {
+		return this.userModel.findById(id);
 	}
 
-	create(data: CreateUserDto) {
-		this.counterId = this.counterId + 1;
-		const newUser = {
-			id: this.counterId,
-			...data,
+	async getOrdersByUser(userId: string) {
+		const user = await this.findOne(userId);
+		return {
+			date: new Date(),
+			user,
+			// products: this.productsService.findAll(),
+			products: [],
 		};
-		this.users.push(newUser);
-		return newUser;
 	}
 
-	update(id: number, changes: UpdateUserDto) {
-		const user = this.findOne(id);
-		const index = this.users.findIndex((item) => item.id === id);
-		this.users[index] = {
-			...user,
-			...changes,
-		};
-		return this.users[index];
+	create(payload: CreateUserDto) {
+		const newModel = new this.userModel(payload);
+		return newModel.save();
 	}
 
-	remove(id: number) {
-		const index = this.users.findIndex((item) => item.id === id);
-		if (index === -1) {
-			throw new NotFoundException(`User #${id} not found`);
-		}
-		this.users.splice(index, 1);
-		return true;
+	update(id: string, changes: UpdateUserDto) {
+		return this.userModel
+			.findByIdAndUpdate(id, { $set: changes }, { new: true })
+			.exec();
 	}
 
-	getOrdersByUser(id: number) {
-		return [];
+	remove(id: string) {
+		return this.userModel.findByIdAndDelete(id);
 	}
 }

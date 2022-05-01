@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './database/database.module';
+import { BrandsModule } from './modules/brands/brands.module';
 import config from './config';
 // theres two types of injectable, there is a useClass and useValue, useClass does not need a special threat but useValue does:
 // const API_KEY = '12345678';
@@ -42,6 +43,7 @@ import config from './config';
 		}),
 		UsersModule,
 		ProductsModule,
+		BrandsModule,
 		DatabaseModule,
 		// this is for execute api request inside our app
 		HttpModule,
