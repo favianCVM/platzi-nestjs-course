@@ -3,7 +3,11 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Order } from '../entities/order.entity';
-import { CreateOrderDto, UpdateOrderDto } from '../dtos/order.dto';
+import {
+	CreateOrderDto,
+	UpdateOrderDto,
+	AddOrderProductDto,
+} from '../dtos/order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -34,5 +38,17 @@ export class OrdersService {
 
 	remove(id: string) {
 		return this.orderModel.findByIdAndDelete(id);
+	}
+
+	async removeProduct(orderId: string, productId: string) {
+		const order = await this.orderModel.findById(orderId);
+		order.products.pull(productId);
+		return order.save();
+	}
+
+	async addProduct(orderId: string, payload: AddOrderProductDto) {
+		const order = await this.orderModel.findById(orderId);
+		payload.products.forEach((id) => order.products.addToSet(id));
+		return order.save();
 	}
 }
