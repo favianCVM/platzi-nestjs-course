@@ -8,6 +8,11 @@ import { Brand } from '../entities/brand.entity';
 export class BrandsService {
 	constructor(@InjectModel(Brand.name) private brandModel: Model<Brand>) {}
 
+	/**
+	 * It creates a new brand using the payload passed in, and then saves it to the database
+	 * @param {CreateBrandDto} payload - CreateBrandDto
+	 * @returns The new brand that was created.
+	 */
 	async create(payload: CreateBrandDto) {
 		const newBrand = new this.brandModel(payload);
 		console.log('newBrand :', newBrand);
