@@ -12,6 +12,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './database/database.module';
 import { BrandsModule } from './modules/brands/brands.module';
+import { AuthModule } from './modules/auth/auth.module';
 import config from './config';
 // theres two types of injectable, there is a useClass and useValue, useClass does not need a special threat but useValue does:
 // const API_KEY = '12345678';
@@ -47,26 +48,29 @@ import config from './config';
 		DatabaseModule,
 		// this is for execute api request inside our app
 		HttpModule,
+		AuthModule,
 	],
 	controllers: [AppController],
 	providers: [
 		AppService,
 		// { provide: 'API_KEY', useValue: API_KEY },
-		{
-			provide: 'TASKS',
-			inject: [HttpService],
-			useFactory: async (http: HttpService) => {
-				try {
-					const response = await http.get(
-						'https://jsonplaceholder.typicode.com/todos',
-					);
-					const tasks = await firstValueFrom(response);
-					return tasks.data;
-				} catch (error) {
-					throw error;
-				}
-			},
-		},
+
+		// providing an injectable in the whole controller with async data fetching
+		// {
+		// 	provide: 'TASKS',
+		// 	inject: [HttpService],
+		// 	useFactory: async (http: HttpService) => {
+		// 		try {
+		// 			const response = await http.get(
+		// 				'https://jsonplaceholder.typicode.com/todos',
+		// 			);
+		// 			const tasks = await firstValueFrom(response);
+		// 			return tasks.data;
+		// 		} catch (error) {
+		// 			throw error;
+		// 		}
+		// 	},
+		// },
 	],
 })
 export class AppModule {}

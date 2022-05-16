@@ -10,7 +10,7 @@ export class CreateUserDto {
 	@IsString()
 	@IsNotEmpty()
 	@Length(6)
-	@ApiProperty({ description: "the user' password", deprecated: true })
+	@ApiProperty({ description: "the user' password" })
 	readonly password: string;
 
 	@IsNotEmpty()

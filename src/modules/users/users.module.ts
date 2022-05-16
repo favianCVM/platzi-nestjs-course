@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { UsersService } from './services/users.service';
 import { CustomersService } from './services/customers.service';
 import { OrdersService } from './services/orders.service';
@@ -10,6 +11,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './entities/user.entity';
 import { Customer, CustomerSchema } from './entities/customer.entity';
 import { Order, OrderSchema } from './entities/order.entity';
+import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 @Module({
 	imports: [
 		ProductsModule,
@@ -32,7 +34,8 @@ import { Order, OrderSchema } from './entities/order.entity';
 			},
 		]),
 	],
-	providers: [UsersService, CustomersService, OrdersService],
+	providers: [UsersService, CustomersService, OrdersService, JwtStrategy],
 	controllers: [UsersController, CustomerController, OrdersController],
+	exports: [UsersService],
 })
 export class UsersModule {}

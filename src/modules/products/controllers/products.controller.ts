@@ -9,6 +9,7 @@ import {
 	Delete,
 	HttpStatus,
 	HttpCode,
+	UseGuards,
 	// ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
@@ -17,12 +18,18 @@ import { CreateProductDto, UpdateProductDto } from '../dtos/products.dto';
 import { FindAllProductsQuery } from '../entities/query';
 import { ProductsService } from '../services/products.service';
 import { MongoIdPipe } from '../../../common/pipes/mongoId/mongo-id.pipe';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { Public } from 'src/common/decorators/public.decorator';
 
+// get all products api endpoint is public and use the custom publid decorator and the jwtauthguard that handle the jwt deencription
+
+@UseGuards(JwtAuthGuard)
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
 	constructor(private productsService: ProductsService) {}
 
+	@Public()
 	@Get()
 	@ApiOperation({ summary: 'List all products' })
 	getProducts(@Query() query: FindAllProductsQuery) {
@@ -39,6 +46,7 @@ export class ProductsController {
 	// 	return this.productsService.findOne(productId);
 	// }
 
+	@Public()
 	@Get(':_id')
 	@ApiOperation({ summary: 'Gets a product via _id' })
 	@HttpCode(HttpStatus.ACCEPTED)

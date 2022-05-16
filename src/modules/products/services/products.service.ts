@@ -66,7 +66,6 @@ export class ProductsService {
 	 */
 	async create(payload: CreateProductDto) {
 		const newProduct = new this.productModel(payload);
-		console.log('newProduct :', newProduct);
 		return await newProduct.save();
 	}
 

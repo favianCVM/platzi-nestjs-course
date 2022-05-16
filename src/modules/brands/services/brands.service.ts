@@ -15,7 +15,6 @@ export class BrandsService {
 	 */
 	async create(payload: CreateBrandDto) {
 		const newBrand = new this.brandModel(payload);
-		console.log('newBrand :', newBrand);
 		return await newBrand.save();
 	}
 }

@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcrypt';
 
 import { User } from '../entities/user.entity';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
@@ -27,9 +28,21 @@ export class UsersService {
 		};
 	}
 
-	create(payload: CreateUserDto) {
+	async create(payload: CreateUserDto) {
 		const newModel = new this.userModel(payload);
-		return newModel.save();
+
+		const passwordSalt = await bcrypt.genSalt(15);
+
+		const encryptedPassword = await bcrypt.hash(
+			newModel.password,
+			passwordSalt,
+		);
+
+		newModel.password = encryptedPassword;
+
+		const savedUser = await (await newModel.save()).toJSON();
+
+		return savedUser;
 	}
 
 	update(id: string, changes: UpdateUserDto) {
@@ -40,5 +53,27 @@ export class UsersService {
 
 	remove(id: string) {
 		return this.userModel.findByIdAndDelete(id);
+	}
+
+	async findByEmail({
+		selectPassword,
+		email,
+	}: {
+		selectPassword?: boolean;
+		email: string;
+	}): Promise<User> {
+		const user = await this.userModel
+			.findOne(
+				{ email: { $eq: email } },
+				{ password: selectPassword ? 1 : 0, email: 1, role: 1 },
+			)
+			.exec();
+
+		if (!user)
+			throw new NotFoundException(
+				`The user with the email ${email} does not exist`,
+			);
+
+		return user;
 	}
 }
