@@ -7,6 +7,8 @@ import { LoginDto } from '../auth.dto';
 import { User } from '../../users/entities/user.entity';
 import { PayloadToken } from '../models/token.model';
 
+/* It takes a LoginDto object, finds a user by email, compares the password, and returns the user data
+if the password is correct */
 @Injectable()
 export class AuthService {
 	constructor(
@@ -14,6 +16,12 @@ export class AuthService {
 		private jwtService: JwtService,
 	) {}
 
+	/**
+	 * It takes a LoginDto object, finds a user by email, compares the password, and returns the user data
+	 * if the password is correct
+	 * @param {LoginDto}  - `password` - the password that the user entered
+	 * @returns The user data without the password.
+	 */
 	async validateUser({ password, email }: LoginDto): Promise<any | User> {
 		const user = await this.userService.findByEmail({
 			selectPassword: true,
